@@ -64,15 +64,15 @@ void sound(unsigned char type){
 Adafruit_NeoPixel LED = Adafruit_NeoPixel(numLED, LED_PIN, NEO_GRB + NEO_KHZ800);
 
 //define struct for collor
-struct collor{
+struct color{
   //these values range from 0 - 255 (no brightness to full brightness)
   char red;
   char green;
   char blue;
 };
 
-//set collor of all leds to a collor
-void LEDSet(struct collor arg){
+//set color of all leds to a collor
+void LEDSet(struct color arg){
   //write analog pins for on time
   for (int i = 0; i < LED.numPixels(); i++) {
     LED.setPixelColor(i, LED.Color(arg.red,arg.green,arg.blue)); //set color.
@@ -112,7 +112,7 @@ void colorWipe(struct collor arg, int wait) {
 void initialiseLED(){
   LED.begin(); // This initializes the NeoPixel library.
 
-  struct collor start;
+  struct color start;
   start.red   = 150;
   start.green = 10;
   start.blue  = 30;
@@ -124,9 +124,9 @@ void initialiseLED(){
 }
 
 // Input a value 0 to 255 to get a color value.
-// The colours are a transition r - g - b - back to r.
-struct collor Wheel(byte WheelPos) {
-  struct collor ret;
+// The colors are a transition r - g - b - back to r.
+struct color Wheel(byte WheelPos) {
+  struct color ret;
   WheelPos = 255 - WheelPos;
   if(WheelPos < 85) {
     ret.red = 255 - WheelPos * 3;
@@ -148,7 +148,7 @@ struct collor Wheel(byte WheelPos) {
   return ret;
 }
 
-void LEDCycle(struct collor arg, int onTime, int offTime){
+void LEDCycle(struct color arg, int onTime, int offTime){
 
   //write analog pins for on time
   for (int i = 0; i < LED.numPixels(); i++) {
@@ -169,7 +169,7 @@ void LEDCycle(struct collor arg, int onTime, int offTime){
   delay(offTime);
 }
 
-void LEDFade(struct collor arg, int onTime, int offTime){
+void LEDFade(struct color arg, int onTime, int offTime){
   //write analog pins for on time
   for (float j = 0; j < 255; j++) {
     for (int i = 0; i < LED.numPixels(); i++) {
@@ -199,20 +199,20 @@ void error(int type){
   wifi.green = 128;
   wifi.blue  = 128;
 
-  //define collor to indicate connecting to MQTT
+  //define color to indicate connecting to MQTT
   struct collor mqtt;
   mqtt.red   = 128;
   mqtt.green = 0;
   mqtt.blue  = 128;
 
-  //define collor to indicate connecting to HTTP
-  struct collor HTTP;
+  //define color to indicate connecting to HTTP
+  struct color HTTP;
   HTTP.red   = 128;
   HTTP.green = 128;
   HTTP.blue  = 0;
 
-  //define collor to indicate connecting to MQTT
-  struct collor JSON;
+  //define color to indicate connecting to MQTT
+  struct color JSON;
   JSON.red   = 0;
   JSON.green = 128;
   JSON.blue  = 0;
@@ -230,20 +230,20 @@ void error(int type){
     beepSleep(700,100);
     delay(50);
     beepSleep(700,100);
-    LEDBlink(mqtt,200,500); //blink this collor while connecting to wifi
+    LEDBlink(mqtt,200,500); //blink this color while connecting to wifi
     break;
     case 2:
     LEDSet(HTTP);
     beepSleep(900,100);
     delay(50);
     beepSleep(900,100);
-    LEDBlink(HTTP,200,500); //blink this collor while connecting to wifi
+    LEDBlink(HTTP,200,500); //blink this color while connecting to wifi
     case 3:
     LEDSet(JSON);
     beepSleep(1300,100);
     delay(50);
     beepSleep(1300,100);
-    LEDBlink(JSON,200,500); //blink this collor while connecting to wifi
+    LEDBlink(JSON,200,500); //blink this color while connecting to wifi
     break;
   }
 }
@@ -294,10 +294,10 @@ uint32_t delayMS;
 
 WiFiClient client;
 
-void connectWiFi(){
+void connectWiFi(_Bool beep){
 
-  //define collor to indicate connecting to wifi
-  struct collor wifi;
+  //define color to indicate connecting to wifi
+  struct color wifi;
   wifi.red   = 0;
   wifi.green = 128;
   wifi.blue  = 128;
@@ -311,7 +311,9 @@ void connectWiFi(){
 
   while (WiFi.status() != WL_CONNECTED) {
 
-    error(0);
+    if(beep){
+      error(0);
+    }
 
     Serial.println("Connecting to WiFi..");
   }
@@ -320,7 +322,7 @@ void connectWiFi(){
   beepSleep(500,50);
   beepSleep(800,50);
 
-  LEDFade(wifi,1,1); //blink this collor while connecting to wifi
+  LEDFade(wifi,1,1); //blink this color while connecting to wifi
   LEDoff();
 }
 
@@ -370,7 +372,7 @@ struct weatherInfo getWeatherOutside() {
   //just make sure its connected
   if (WiFi.status() != WL_CONNECTED) { //Check WiFi connection status
     Serial.println("not connected to wifi");
-    connectWiFi();
+    connectWiFi(0);
   }
 
   HTTPClient http;  //Declare an object of class HTTPClient
@@ -448,7 +450,7 @@ void setup() {
   delayMS = sensor.min_delay / 1000;
 
   initialiseLED();
-  connectWiFi();
+  connectWiFi(1);
 }
 
 int onMargin = 10;
@@ -468,5 +470,5 @@ void loop() {
     }
   }
 
-  delay(3000);    //Send a request every 30 seconds
+  delay(60000);    //Send a request every 60 seconds
 }
