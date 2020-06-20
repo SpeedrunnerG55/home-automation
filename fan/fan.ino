@@ -63,7 +63,7 @@ void sound(unsigned char type){
 // example for more information on possible values.
 Adafruit_NeoPixel LED = Adafruit_NeoPixel(numLED, LED_PIN, NEO_GRB + NEO_KHZ800);
 
-//define struct for collor
+//define struct for color
 struct color{
   //these values range from 0 - 255 (no brightness to full brightness)
   char red;
@@ -71,7 +71,7 @@ struct color{
   char blue;
 };
 
-//set color of all leds to a collor
+//set color of all leds to a color
 void LEDSet(struct color arg){
   //write analog pins for on time
   for (int i = 0; i < LED.numPixels(); i++) {
@@ -91,8 +91,8 @@ void LEDoff(){
   LED.show(); // This sends the updated pixel color to the hardware.
 }
 
-//blinks led a collor for some time then turns it of for some time
-void LEDBlink(struct collor arg, int onTime, int offTime){
+//blinks led a color for some time then turns it of for some time
+void LEDBlink(struct color arg, int onTime, int offTime){
   LEDSet(arg); //write analog pins for on time
   delay(onTime); // Delay for a period of time (in milliseconds).
   LEDoff(); //turn off for off time
@@ -100,7 +100,7 @@ void LEDBlink(struct collor arg, int onTime, int offTime){
 }
 
 // Fill the dots one after the other with a color
-void colorWipe(struct collor arg, int wait) {
+void colorWipe(struct color arg, int wait) {
   for(uint16_t i=0;i < LED.numPixels(); i++) {
     LED.setPixelColor(i,LED.Color(arg.red,arg.green,arg.blue));
     delay(wait);
@@ -193,14 +193,14 @@ void LEDFade(struct color arg, int onTime, int offTime){
 
 void error(int type){
 
-  //define collor to indicate connecting to wifi
-  struct collor wifi;
+  //define color to indicate connecting to wifi
+  struct color wifi;
   wifi.red   = 0;
   wifi.green = 128;
   wifi.blue  = 128;
 
   //define color to indicate connecting to MQTT
-  struct collor mqtt;
+  struct color mqtt;
   mqtt.red   = 128;
   mqtt.green = 0;
   mqtt.blue  = 128;
@@ -223,7 +223,7 @@ void error(int type){
     beepSleep(500,100);
     delay(50);
     beepSleep(500,100);
-    LEDBlink(wifi,200,500); //blink this collor while connecting to wifi
+    LEDBlink(wifi,200,500); //blink this color while connecting to wifi
     break;
     case 1:
     LEDSet(mqtt);
