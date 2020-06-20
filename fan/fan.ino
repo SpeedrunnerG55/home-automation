@@ -453,8 +453,8 @@ void setup() {
   connectWiFi(1);
 }
 
-int onMargin = 10;
-int offMargin = 2;
+int onMargin = 2;
+int offMargin = 1;
 
 void loop() {
 
